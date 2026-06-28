@@ -25,18 +25,18 @@ class CreditCard(BaseModel):
 	review				: str = Field(min_length=1)
 
 BANK_NAMES = [
+	"AEON",
 	"Affin",
 	"Alliance Bank",
 	"AmBank",
 	"Bank Islam",
-	"Bank Muamalat",
 	"Bank Rakyat",
 	"BSN",
 	"CIMB",
 	"HSBC",
 	"Hong Leong",
 	"Maybank",
-	"OCBC Bank",
+	"OCBC",
 	"Public Bank",
 	"RHB",
 	"Standard Chartered",

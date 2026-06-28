@@ -1,4 +1,3 @@
-from dataclasses import Field
 import os
 import logging
 from bs4 import BeautifulSoup

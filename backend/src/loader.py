@@ -11,10 +11,11 @@ logging.basicConfig(
 	format="%(asctime)s | %(levelname)s | %(message)s"
 )
 
-QUERY_DIR = Path("queries")
+QUERY_DIR = Path("/app/sql") or Path("../../sql")
 OPEN_TABLE_QUERY = QUERY_DIR / "open_table.sql"
 INSERT_FIELDS_QUERY = QUERY_DIR / "insert_fields.sql"
 GET_CONTENT_HASH_QUERY = QUERY_DIR / "get_content_hash.sql"
+DB_NAME = "credit_cards.db"
 
 
 def load_all_jsons(input_dir, output_dir):
@@ -24,7 +25,7 @@ def load_all_jsons(input_dir, output_dir):
 		return
 
 	insert_count = 0
-	conn = init_db(output_dir / "jobs.db")
+	conn = init_db(output_dir / DB_NAME)
 	cursor = conn.cursor()
 	for json_file in input_dir.glob("*.json"):
 		try:
@@ -33,9 +34,9 @@ def load_all_jsons(input_dir, output_dir):
 			
 			entry = init_entry(data)
 			cursor.execute(GET_CONTENT_HASH_QUERY.read_text(encoding="utf-8")
-							, (entry["source_id"],))
+							, (entry["card_title"],))
 			existing_hash = cursor.fetchone()
-			if (existing_hash is not None 
+			if (existing_hash is not None
 				and existing_hash[0] == entry["content_hash"]):
 				logging.info(f"Skipped (duplicate): {json_file.name}")
 				continue
@@ -84,29 +85,58 @@ def init_db(db_path):
 
 
 def init_entry(data):
-	# Create a unique hash for the job posting based on its content.
-	# Exclude source_id, tech_stack and quality.
-	hash_input = f"{data['job_title']}|{data['company']}|{data['description']}"
+	# Create a unique hash based on its content.
+	core_content = {
+		"cashback":				data["cashback"],
+		"petrol":				data["petrol"],
+		"rewards":				data["rewards"],
+		"travel":				data["travel"],
+		"premium_perks":		data["premium_perks"],
+		"balance_transfer":		data["balance_transfer"],
+		"easy_payment_plan":	data["easy_payment_plan"],
+		"fees":					data["fees"],
+		"requirements":			data["requirements"],
+		"features":				data["features"],
+		"review":				data["review"]
+	}
+
+	hash_input = json.dumps(core_content, sort_keys=True, default=str)
 
 	return {    
-		"source_id":    data["source_id"],
-		"job_title":    data["job_title"],
-		"company":      data["company"],
-		"description":  data["description"],
-		"tech_stack":   None,
-		"quality":      None,
-		"content_hash": sha256(hash_input.encode()).hexdigest()
+		"card_title":			data["card_name"],
+		"bank":					data["bank"],
+		"cashback":				data["cashback"],
+		"petrol":				data["petrol"],
+		"rewards":				data["rewards"],
+		"travel":				data["travel"],
+		"premium_perks":		data["premium_perks"],
+		"balance_transfer":		data["balance_transfer"],
+		"easy_payment_plan":	data["easy_payment_plan"],
+		"fees":					data["fees"],
+		"requirements":			data["requirements"],
+		"features":				data["features"],
+		"review":				data["review"],
+		"keywords":				None,
+		"content_hash":			sha256(hash_input.encode('utf-8')).hexdigest()
 	}
 
 
 def upsert_entry(conn, entry):
 	cursor = conn.cursor()
 	cursor.execute(INSERT_FIELDS_QUERY.read_text(encoding="utf-8"), (
-					entry["source_id"],
-					entry["job_title"],
-					entry["company"],
-					entry["description"],
-					entry["tech_stack"],
-					entry["quality"],
+					entry["card_title"],
+					entry["bank"],
+					entry["cashback"],
+					entry["petrol"],
+					entry["rewards"],
+					entry["travel"],
+					entry["premium_perks"],
+					entry["balance_transfer"],
+					entry["easy_payment_plan"],
+					entry["fees"],
+					entry["requirements"],
+					entry["features"],
+					entry["review"],
+					entry["keywords"],
 					entry["content_hash"]
 	))

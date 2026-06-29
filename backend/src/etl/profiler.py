@@ -1,5 +1,4 @@
 import os
-import re
 import sqlite3
 import logging
 from pathlib import Path
@@ -71,6 +70,6 @@ def print_data_profile_report(stats):
 	)
 	for bank, count in stats["card_counts"].items():
 		print(f"  - {bank}: {count}")
-	print(f"\n🏷️ Category Counts:")
+	print("\n🏷️ Category Counts:")
 	for category, count in stats["category_counts"].items():
 		print(f"  - {category}: {count}")

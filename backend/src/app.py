@@ -2,6 +2,7 @@
 import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from api.routes import router
 from config.settings import DB_PATH
 from rag.retriever import load_cards, initialize_rag_context
 from rag.prompt_model import _ensure_gemini_client
@@ -36,5 +37,4 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Credit Card RAG Advisor", version="1.0.0", lifespan=lifespan)
 
-from api.routes import router
 app.include_router(router, prefix="/api/v1")

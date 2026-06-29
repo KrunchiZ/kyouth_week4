@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{% block title %}Credit Card Advisor{% endblock %}</title>
+
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+
+<nav>
+    <a href="/">Home</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/chatbot">Chatbot</a>
+</nav>
+
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+
+<footer>
+    © 2026 Credit Card Advisor
+</footer>
+
+</body>
+</html>

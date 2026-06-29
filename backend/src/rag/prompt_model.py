@@ -20,17 +20,42 @@ load_dotenv()
 
 def get_secret(secret_name, default=None):
 	secret_path = Path(f"/run/secrets/{secret_name}")
-	
+
 	if os.path.exists(secret_path):
 		# .strip() removes trailing newlines added by files or command lines
 		return secret_path.read_text().strip()
 	else:
 		if default is not None:
 			return default
-		raise FileNotFoundError(f"Secret {secret_name} not found at {secret_path}")
+		return None
 
-gemini_client = genai.Client(api_key=get_secret("gemini_api_key"))
-ollama_client = ollama.Client(host="http://ollama:11434")
+# Lazy-initialized clients — instantiated on first use, not at import time.
+# This avoids FileNotFoundError when secrets aren't mounted (e.g. local dev).
+_gemini_client = None
+_ollama_client = None
+
+
+def _ensure_gemini_client():
+	global _gemini_client
+	if _gemini_client is None:
+		api_key = get_secret("gemini_api_key") or os.getenv("GEMINI_API_KEY")
+		if not api_key:
+			raise RuntimeError(
+				"GEMINI_API_KEY not found. "
+				"Set via Docker secret at /run/secrets/gemini_api_key "
+				"or GEMINI_API_KEY env var."
+			)
+		_gemini_client = genai.Client(api_key=api_key)
+	return _gemini_client
+
+
+def _ensure_ollama_client():
+	global _ollama_client
+	if _ollama_client is None:
+		_ollama_client = ollama.Client(
+			host=os.getenv("OLLAMA_HOST", "http://ollama:11434")
+		)
+	return _ollama_client
 
 OLLAMA_MODELS = {
 	"llama3.2",
@@ -82,7 +107,7 @@ def prompt_model(llm_model: str, prompt: str, temperature: float = DEFAULT_TEMPE
 		if llm_model in OLLAMA_MODELS:
 			for i in range(MAX_RETRIES):
 				try:
-					response = ollama_client.generate(
+					response = _ensure_ollama_client().generate(
 						model = llm_model,
 						prompt = prompt,
 						options={
@@ -105,7 +130,7 @@ def prompt_model(llm_model: str, prompt: str, temperature: float = DEFAULT_TEMPE
 		if llm_model in GEMINI_MODELS:
 			for i in range(MAX_RETRIES):
 				try:
-					response = gemini_client.models.generate_content(
+					response = _ensure_gemini_client().models.generate_content(
 						model = llm_model,
 						contents = prompt,
 						config = types.GenerateContentConfig(

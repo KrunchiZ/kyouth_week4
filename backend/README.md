@@ -21,6 +21,7 @@ Then use `get_secret("backend_url")` to get the backend URL.
 Health check.
 
 **Response:**
+
 ```json
 { "status": "ok" }
 ```
@@ -32,10 +33,12 @@ Health check.
 List all credit cards with pagination.
 
 **Query params:**
+
 - `offset` (int, default 0) — skip this many cards
 - `limit` (int, default 17) — max cards to return
 
 **Response:**
+
 ```json
 {
   "cards": [
@@ -61,6 +64,7 @@ Get a single card by title (URL-encoded).
 **Example:** `GET /api/v1/cards/AmBank%20Cash%20Rebate%20Visa%20Platinum%20Card`
 
 **Response:**
+
 ```json
 {
   "card_title": "AmBank Cash Rebate Visa Platinum Card",
@@ -87,6 +91,7 @@ All fields are plain text strings. `N/A` means that category doesn't apply to th
 List distinct banks.
 
 **Response:**
+
 ```json
 ["AmBank", "Alliance Bank"]
 ```
@@ -98,6 +103,7 @@ List distinct banks.
 The RAG chat endpoint. Sends a question and gets an AI-generated answer backed by the credit card database.
 
 **Request body:**
+
 ```json
 {
   "question": "Which card has the best cashback for online shopping?",
@@ -107,11 +113,13 @@ The RAG chat endpoint. Sends a question and gets an AI-generated answer backed b
 ```
 
 **Fields:**
+
 - `question` (string, required, 1–500 chars) — the user's query
 - `top_k` (int, default 3, range 1–17) — how many cards to use as context
 - `llm_provider` (string, default "gemini") — `"gemini"` or `"ollama"`
 
 **Response:**
+
 ```json
 {
   "answer": "Based on the available credit cards, the AmBank Cash Rebate Visa Platinum Card offers the best cashback for online shopping. It provides 10% cash rebates capped at RM10 monthly for online transactions, shopping, grocery, dining, and public transport spending — but only when you maintain a minimum monthly balance of RM1,500 or above. For balances below RM1,500, you still earn 0.2% uncapped cashback on all retail spending.\n\nNo other card in the database offers a comparable cashback rate for online transactions.",
@@ -125,6 +133,7 @@ The RAG chat endpoint. Sends a question and gets an AI-generated answer backed b
 ```
 
 **Fields:**
+
 - `answer` (string) — the AI-generated response
 - `cards_used` (array) — which cards informed the answer
 - `provider` (string) — which LLM was used

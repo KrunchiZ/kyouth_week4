@@ -12,10 +12,6 @@ logging.basicConfig(
 	datefmt="%d/%m/%y %H:%M:%S",
 )
 
-# Hypothetical local model rate limits (fallback)
-LOCAL_RPM = 60
-LOCAL_TPM = 250_000
-
 
 def _parse_num(s: str) -> int:
 	"""Parse K/M suffixes (e.g. '250K' -> 250000)."""

@@ -9,12 +9,6 @@ from rag.retriever import load_cards, initialize_rag_context
 from rag.prompt_model import _ensure_gemini_client
 from sentence_transformers import SentenceTransformer
 
-logging.basicConfig(
-	level=logging.INFO,
-	format="[%(asctime)s] | %(levelname)s | %(message)s",
-	datefmt="%m/%d/%y %H:%M:%S",
-)
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

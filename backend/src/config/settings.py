@@ -6,13 +6,14 @@ import logging
 from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
-
 logging.basicConfig(
 	level=logging.INFO,
 	format="[%(asctime)s] | %(levelname)s | %(message)s",
-	datefmt="%m/%d/%y %H:%M:%S",
+	datefmt="%d/%m/%y %H:%M:%S",
 )
+logging.getLogger("mcp.server.lowlevel.server").setLevel(logging.WARNING)
+
+load_dotenv()
 
 DEV = os.getenv("DEV") == "true"
 

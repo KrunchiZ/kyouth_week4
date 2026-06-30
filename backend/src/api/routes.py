@@ -63,7 +63,7 @@ async def list_cards(
 @router.get("/cards/{card_title}")
 async def get_card(request: Request, card_title: str):
 	async with request.app.state.mcp_client as mcp:
-		result = await mcp.call("fetch_card_by_title", card_title=card_title)
+		result = await mcp.call("fetch_card_by_title", {"card_title": card_title})
 	if not result.content:
 		raise HTTPException(status_code=404, detail=f"Card not found: {card_title}")
 	return json.loads(result.content[0].text)

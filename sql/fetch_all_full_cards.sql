@@ -1,1 +1,0 @@
-SELECT * FROM credit_cards

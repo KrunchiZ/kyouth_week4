@@ -1,3 +1,7 @@
+# Due to some path issues,
+# please run this script in the backend directory
+# "uv run src/tag_data.py"
+
 import asyncio
 import math
 import json

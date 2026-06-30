@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block content %}
+
+<h1>Credit Cards</h1>
+
+{% for card in cards %}
+
+<div>
+
+{{ card.card_title }}
+
+</div>
+
+{% endfor %}
+
+{% endblock %}

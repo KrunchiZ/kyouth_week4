@@ -114,24 +114,33 @@ async def ask(request: Request, user_request: AskRequest):
 	# 3. Build prompt
 	full_prompt = build_user_prompt(user_request.question, cards)
 
-	# 4. Throttle before calling LLM
-	_rate_limiter.wait_if_needed(llm_model, full_prompt)
+	for i in range(3):  # Retry up to 3 times
+		# 4. Throttle before calling LLM
+		_rate_limiter.wait_if_needed(llm_model, full_prompt)
 
-	# 5. Generate response
-	try:
-		answer = prompt_model(llm_model, full_prompt)
-	except Exception as e:
-		logging.error("LLM generation failed: %s", e)
-		raise HTTPException(status_code=503, detail=f"LLM service unavailable: {e}")
+		# 5. Generate response
+		try:
+			answer = prompt_model(llm_model, full_prompt)
+		except Exception as e:
+			logging.error("LLM generation failed: %s", e)
+			raise HTTPException(status_code=503, detail=f"LLM service unavailable: {e}")
 
-	if answer is None:
-		raise HTTPException(status_code=503, detail="LLM returned no response.")
+		if answer is None:
+			raise HTTPException(status_code=503, detail="LLM returned no response.")
 
-	final_card = answer.splitlines()[0]
-	final_card = json.loads(
-		(await mcp.call_tool("fetch_card_by_title", {"card_title": final_card}))
-		.content[0].text
-	)
+		final_card = answer.splitlines()[0].strip()
+		if final_card:
+			final_card = json.loads(
+				(await mcp.call_tool("fetch_card_by_title", {"card_title": final_card}))
+				.content[0].text
+			)
+			break
+		else:
+			if i < 2:
+				logging.warning("LLM response did not contain a valid card title. Retrying...")
+				continue
+			raise HTTPException(status_code=503,
+				detail="LLM response did not contain a valid card title after 3 attempts.")
 	try:
 		return AskResponse(
 			answer=answer,

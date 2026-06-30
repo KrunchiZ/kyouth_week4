@@ -1,28 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>{% block title %}Credit Card Advisor{% endblock %}</title>
 
     <link rel="stylesheet" href="/static/css/style.css">
+
+    {% block styles %}{% endblock %}
 </head>
 
 <body>
 
-<nav>
-    <a href="/">Home</a>
-    <a href="/dashboard">Dashboard</a>
-    <a href="/chatbot">Chatbot</a>
-</nav>
+<header>
+
+    <h2>💳 Credit Card Advisor</h2>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/chatbot">Chatbot</a>
+    </nav>
+
+</header>
 
 <main>
+
     {% block content %}
+
     {% endblock %}
+
 </main>
 
 <footer>
-    © 2026 Credit Card Advisor
+
+    <p>© 2026 Credit Card Advisor</p>
+
 </footer>
 
+{% block scripts %}
+
+{% endblock %}
+
 </body>
+
 </html>

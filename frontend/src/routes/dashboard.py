@@ -9,7 +9,7 @@ async def dashboard(request: Request):
     data = await get_cards()
 
     return request.app.state.templates.TemplateResponse(
-        "dashboard.html",
+        request, "dashboard.html",
         {
             "request": request,
             "cards": data["cards"]

@@ -6,7 +6,7 @@ router = APIRouter()
 async def chatbot(request: Request):
 
     return request.app.state.templates.TemplateResponse(
-        "chatbot.html",
+        request, "chatbot.html",
         {
             "request": request
         }

@@ -1,19 +1,42 @@
 {% extends "base.html" %}
 
 {% block title %}
-Chatbot
+AI Chatbot
+{% endblock %}
+
+{% block styles %}
+
+<link rel="stylesheet" href="/static/css/chatbot.css">
+
 {% endblock %}
 
 {% block content %}
 
-<h1>Ask AI</h1>
+<h1>Ask Our AI</h1>
 
-<input>
+<div class="chat-box">
 
-<button>
+    <textarea
+        id="question"
+        placeholder="Ask something..."
+    ></textarea>
 
-Ask
+    <button id="askBtn">
 
-</button>
+        Ask
+
+    </button>
+
+</div>
+
+<div id="loading"></div>
+
+<div id="answer"></div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script src="/static/js/chatbot.js"></script>
 
 {% endblock %}

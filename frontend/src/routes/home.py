@@ -6,7 +6,7 @@ router = APIRouter()
 async def landing(request: Request):
 
     return request.app.state.templates.TemplateResponse(
-        "landing.html",
+        request, "landing.html",
         {
             "request": request
         }

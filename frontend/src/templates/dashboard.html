@@ -4,18 +4,48 @@
 Dashboard
 {% endblock %}
 
+{% block styles %}
+
+<link rel="stylesheet" href="/static/css/dashboard.css">
+
+{% endblock %}
+
 {% block content %}
 
-<h1>Credit Cards</h1>
+<h1>Available Credit Cards</h1>
+
+<input
+    id="search"
+    placeholder="Search card..."
+>
+
+<div id="cardContainer">
 
 {% for card in cards %}
 
-<div>
+<div class="card">
 
-{{ card.card_title }}
+    <h3>{{ card.card_title }}</h3>
+
+    <p>{{ card.bank }}</p>
+
+    <button
+        class="view-btn"
+        data-title="{{ card.card_title }}"
+    >
+        View Details
+    </button>
 
 </div>
 
 {% endfor %}
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script src="/static/js/dashboard.js"></script>
 
 {% endblock %}

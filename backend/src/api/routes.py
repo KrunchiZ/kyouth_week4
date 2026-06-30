@@ -3,7 +3,7 @@ import logging
 import sqlite3
 from fastapi import APIRouter, HTTPException, Query
 from config.settings import DB_PATH, RATE_LIMITS_PATH
-from rag.retriever import retrieve_top_context, extract_card_titles, _chunks
+from rag import retriever
 from rag.prompts import SYSTEM_PROMPT, build_user_prompt
 from rag.prompt_model import prompt_model
 from rag.throttler import RateLimiter
@@ -95,14 +95,14 @@ async def ask(request: AskRequest):
 	llm_model = request.llm_provider
 
 	# 1. Retrieve top-K matching chunks from RAG context
-	if _chunks is None:
+	if retriever._chunks is None:
 		raise HTTPException(
 			status_code=503,
 			detail="RAG context not initialized — server may still be starting",
 		)
 
-	matched_chunks = retrieve_top_context(request.question, request.top_k)
-	card_titles = extract_card_titles(matched_chunks)
+	matched_chunks = retriever.retrieve_top_context(request.question, request.top_k)
+	card_titles = retriever.extract_card_titles(matched_chunks)
 
 	# 2. Fetch full card details for the matched titles
 	all_cards = _fetch_all_full_cards()

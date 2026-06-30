@@ -139,7 +139,7 @@ def get_soup_text(soup, attr_value):
 		else:
 			return "N/A"
 	value: str = get_all_elements_text(tag)
-	if value == "":
+	if value == "" or value.lower().strip() == attr_value.lower():
 		if (attr_value == "card_title" or attr_value == "bank"
 	  			or attr_value == "fees" or attr_value == "requirements"
 				or attr_value == "review"):

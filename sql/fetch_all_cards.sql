@@ -1,0 +1,1 @@
+SELECT card_title, bank FROM credit_cards

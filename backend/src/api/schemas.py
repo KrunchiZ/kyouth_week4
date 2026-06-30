@@ -15,21 +15,16 @@ class AskRequest(BaseModel):
 		] = "llama3.2"
 
 
-class CardUsed(BaseModel):
+class CardSummary(BaseModel):
 	card_title: str
 	bank: str
 
 
 class AskResponse(BaseModel):
 	answer: str
-	cards_used: list[CardUsed]
+	cards_used: list[CardSummary]
 	provider: str
 	top_k: int
-
-
-class CardSummary(BaseModel):
-	card_title: str
-	bank: str
 
 
 class CardsListResponse(BaseModel):

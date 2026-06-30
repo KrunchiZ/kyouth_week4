@@ -9,7 +9,7 @@ from collections import defaultdict
 logging.basicConfig(
 	level=logging.INFO,
 	format="[%(asctime)s] | %(levelname)s | %(message)s",
-	datefmt="%m/%d/%y %H:%M:%S",
+	datefmt="%d/%m/%y %H:%M:%S",
 )
 
 # Hypothetical local model rate limits (fallback)

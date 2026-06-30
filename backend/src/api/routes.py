@@ -1,6 +1,7 @@
 """FastAPI route handlers for the Credit Card RAG Advisor."""
 import logging
 import sqlite3
+from pydantic import ValidationError
 from fastapi import APIRouter, HTTPException, Query
 from config.settings import DB_PATH, RATE_LIMITS_PATH
 from rag import retriever
@@ -17,7 +18,7 @@ from api.schemas import (
 logging.basicConfig(
 	level=logging.INFO,
 	format="[%(asctime)s] | %(levelname)s | %(message)s",
-	datefmt="%m/%d/%y %H:%M:%S",
+	datefmt="%d/%m/%y %H:%M:%S",
 )
 
 router = APIRouter()
@@ -118,8 +119,9 @@ async def ask(request: AskRequest):
 		)
 
 	# 3. Build prompt
-	user_prompt = build_user_prompt(request.question, cards)
-	full_prompt = f"{SYSTEM_PROMPT}\n\n{user_prompt}"
+	full_prompt = build_user_prompt(request.question, cards)
+
+	print(f"Full prompt sent to LLM:\n{full_prompt}\n")
 
 	# 4. Throttle before calling LLM
 	_rate_limiter.wait_if_needed(llm_model, full_prompt)
@@ -134,9 +136,14 @@ async def ask(request: AskRequest):
 	if answer is None:
 		raise HTTPException(status_code=503, detail="LLM returned no response.")
 
-	return AskResponse(
-		answer=answer,
-		cards_used=[CardSummary(**{"card_title": c["card_title"], "bank": c["bank"]}) for c in cards],
-		provider=request.llm_provider,
-		top_k=request.top_k,
-	)
+	try:
+		return AskResponse(
+			answer=answer,
+			cards_used=[CardSummary(**{"card_title": c["card_title"], "bank": c["bank"]}) for c in cards],
+			provider=request.llm_provider,
+			top_k=request.top_k,
+		)
+	except ValidationError as code:
+		error_messages = [f"{' -> '.join(map(str, err['loc']))}: {err['msg']} ({err['type']})"
+			for err in code.errors()]
+		raise HTTPException(status_code=422, detail=f"{error_messages}")

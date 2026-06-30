@@ -15,7 +15,7 @@ load_dotenv()
 logging.basicConfig(
 	level=logging.INFO,
 	format="[%(asctime)s] | %(levelname)s | %(message)s",
-	datefmt="%m/%d/%y %H:%M:%S",
+	datefmt="%d/%m/%y %H:%M:%S",
 )
 
 # Global RAG state — populated by FastAPI lifespan at startup

@@ -2,8 +2,9 @@
 import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from fastmcp import Client
 from api.routes import router
-from config.settings import DB_PATH
+from config.settings import DB_PATH, DB_SERVER_PATH
 from rag.retriever import load_cards, initialize_rag_context
 from rag.prompt_model import _ensure_gemini_client
 from sentence_transformers import SentenceTransformer
@@ -31,8 +32,13 @@ async def lifespan(app: FastAPI):
         pass  # API key not available locally — fine for dev
 
     logging.info("RAG matrix initialized and cached in RAM!")
+    app.state.mcp_client = Client(DB_SERVER_PATH)
+    await app.state.mcp_client.connect()
+
     yield
-    logging.info("Shutting down server...")
+
+    logging.info("Shutting down RAG server...")
+    await app.state.mcp_client.close()
 
 
 app = FastAPI(title="Credit Card RAG Advisor", version="1.0.0", lifespan=lifespan)

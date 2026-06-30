@@ -1,11 +1,11 @@
 """FastAPI route handlers for the Credit Card RAG Advisor."""
 import logging
-import sqlite3
+import json
 from pydantic import ValidationError
-from fastapi import APIRouter, HTTPException, Query
-from config.settings import DB_PATH, RATE_LIMITS_PATH
+from fastapi import APIRouter, HTTPException, Request, Query
+from config.settings import DB_SERVER_PATH, RATE_LIMITS_PATH
 from rag import retriever
-from rag.prompts import SYSTEM_PROMPT, build_user_prompt
+from rag.prompts import build_user_prompt
 from rag.prompt_model import prompt_model
 from rag.throttler import RateLimiter
 from api.schemas import (
@@ -31,28 +31,6 @@ _rate_limiter = RateLimiter(RATE_LIMITS_PATH)
 # Helper: fetch all cards from SQLite
 # ---------------------------------------------------------------------------
 
-def _fetch_all_cards() -> list[dict]:
-	with sqlite3.connect(str(DB_PATH)) as conn:
-		conn.row_factory = sqlite3.Row
-		cursor = conn.cursor()
-		cursor.execute("SELECT card_title, bank FROM credit_cards")
-		return [dict(row) for row in cursor.fetchall()]
-
-
-def _fetch_all_full_cards() -> list[dict]:
-	with sqlite3.connect(str(DB_PATH)) as conn:
-		conn.row_factory = sqlite3.Row
-		cursor = conn.cursor()
-		cursor.execute("SELECT * FROM credit_cards")
-		return [dict(row) for row in cursor.fetchall()]
-
-
-def _distinct_banks() -> list[str]:
-	with sqlite3.connect(str(DB_PATH)) as conn:
-		cursor = conn.cursor()
-		cursor.execute("SELECT DISTINCT bank FROM credit_cards ORDER BY bank")
-		return [row[0] for row in cursor.fetchall()]
-
 
 # ---------------------------------------------------------------------------
 # Routes
@@ -65,10 +43,15 @@ async def health_check():
 
 @router.get("/cards", response_model=CardsListResponse)
 async def list_cards(
+	request: Request,
 	offset: int = Query(0, ge=0),
 	limit: int = Query(17, ge=1, le=100),
 ):
-	all_cards = _fetch_all_cards()
+	async with request.app.state.mcp_client as mcp:
+		result = await mcp.call("fetch_all_cards")
+	all_cards: list[dict] = (
+		json.loads(result.content[0].text) if result.content else []
+	)
 	total = len(all_cards)
 	paginated = all_cards[offset: offset + limit]
 	return CardsListResponse(
@@ -78,22 +61,24 @@ async def list_cards(
 
 
 @router.get("/cards/{card_title}")
-async def get_card(card_title: str):
-	cards = _fetch_all_full_cards()
-	for card in cards:
-		if card["card_title"] == card_title:
-			return card
-	raise HTTPException(status_code=404, detail=f"Card not found: {card_title}")
+async def get_card(request: Request, card_title: str):
+	async with request.app.state.mcp_client as mcp:
+		result = await mcp.call("fetch_card_by_title", card_title=card_title)
+	if not result.content:
+		raise HTTPException(status_code=404, detail=f"Card not found: {card_title}")
+	return json.loads(result.content[0].text)
 
 
 @router.get("/banks")
-async def list_banks():
-	return _distinct_banks()
+async def list_banks(request: Request):
+	async with request.app.state.mcp_client as mcp:
+		result = await mcp.call("fetch_all_banks")
+	return json.loads(result.content[0].text) if result.content else []
 
 
 @router.post("/ask", response_model=AskResponse)
-async def ask(request: AskRequest):
-	llm_model = request.llm_provider
+async def ask(request: Request, user_request: AskRequest):
+	llm_model = user_request.llm_provider
 
 	# 1. Retrieve top-K matching chunks from RAG context
 	if retriever._chunks is None:
@@ -102,24 +87,26 @@ async def ask(request: AskRequest):
 			detail="RAG context not initialized — server may still be starting",
 		)
 
-	matched_chunks = retriever.retrieve_top_context(request.question, request.top_k)
-	card_titles = retriever.extract_card_titles(matched_chunks)
+	matched_chunks = retriever.retrieve_top_context(user_request.question, user_request.top_k)
+	matched_card_titles = retriever.extract_card_titles(matched_chunks)
 
 	# 2. Fetch full card details for the matched titles
-	all_cards = _fetch_all_full_cards()
+	async with request.app.state.mcp_client as mcp:
+		result = await mcp.call("fetch_all_full_cards")
+	all_cards: list[dict] = json.loads(result.content[0].text) if result.content else []
 	title_to_card = {c["card_title"]: c for c in all_cards}
-	cards = [title_to_card[t] for t in card_titles if t in title_to_card]
+	cards = [title_to_card[t] for t in matched_card_titles if t in title_to_card]
 
 	if not cards:
 		return AskResponse(
 			answer="I couldn't find any matching credit cards in the database.",
 			cards_used=[],
-			provider=request.llm_provider,
-			top_k=request.top_k,
+			provider=user_request.llm_provider,
+			top_k=user_request.top_k,
 		)
 
 	# 3. Build prompt
-	full_prompt = build_user_prompt(request.question, cards)
+	full_prompt = build_user_prompt(user_request.question, cards)
 
 	print(f"Full prompt sent to LLM:\n{full_prompt}\n")
 
@@ -140,10 +127,10 @@ async def ask(request: AskRequest):
 		return AskResponse(
 			answer=answer,
 			cards_used=[CardSummary(**{"card_title": c["card_title"], "bank": c["bank"]}) for c in cards],
-			provider=request.llm_provider,
-			top_k=request.top_k,
+			provider=user_request.llm_provider,
+			top_k=user_request.top_k,
 		)
 	except ValidationError as code:
 		error_messages = [f"{' -> '.join(map(str, err['loc']))}: {err['msg']} ({err['type']})"
-			for err in code.errors()]
+			for err in user_request.errors()]
 		raise HTTPException(status_code=422, detail=f"{error_messages}")

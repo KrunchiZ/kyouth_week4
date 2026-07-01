@@ -172,17 +172,19 @@ function renderPage() {
    Pagination controls
    ============================================================ */
 
-prevBtn.addEventListener("click", () => { currentPage--; renderPage(); });
-nextBtn.addEventListener("click", () => { currentPage++; renderPage(); });
+if (prevBtn) prevBtn.addEventListener("click", () => { currentPage--; renderPage(); });
+if (nextBtn) nextBtn.addEventListener("click", () => { currentPage++; renderPage(); });
 
 /* ============================================================
    Filter listeners
    ============================================================ */
 
-[filterBank, filterIncome].forEach(el =>
-    el.addEventListener("change", applyFilters)
-);
-filterSearch.addEventListener("input", applyFilters);
+if (filterBank && filterIncome) {
+    [filterBank, filterIncome].forEach(el =>
+        el.addEventListener("change", applyFilters)
+    );
+}
+if (filterSearch) filterSearch.addEventListener("input", applyFilters);
 
 /* ============================================================
    Boot
@@ -195,12 +197,12 @@ async function init() {
         allCards = await fetchAllCards();
         filtered = allCards;
     } catch (err) {
-        gridLoading.innerHTML = `<span style="color:#dc2626">Failed to load cards: ${err.message}</span>`;
+        if (gridLoading) gridLoading.innerHTML = `<span style="color:#dc2626">Failed to load cards: ${err.message}</span>`;
         return;
     }
 
-    gridLoading.style.display = "none";
+    if (gridLoading) gridLoading.style.display = "none";
     renderPage();
 }
 
-init();
+if (cardGrid) init();

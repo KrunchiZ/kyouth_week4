@@ -10,7 +10,7 @@ async def _fetch_all_cards_summary(batch_size: int = 10):
     all_cards = []
     offset = 0
     for _ in range(50):  # safety cap
-        data = await get_cards(offset=offset, limit=batch_size)
+        data = await get_cards(offset=offset, limit=batch_size, paginate=True)
         batch = data.get("cards", [])
         if not batch:
             break

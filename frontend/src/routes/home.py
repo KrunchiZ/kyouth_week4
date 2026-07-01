@@ -13,7 +13,7 @@ async def _get_teaser_cards(target: int = 3, batch_size: int = 10, max_batches: 
     offset = 0
 
     for _ in range(max_batches):
-        data = await get_cards(offset=offset, limit=batch_size)
+        data = await get_cards(offset=offset, limit=batch_size, paginate=True)
         batch = data.get("cards", [])
 
         if not batch:

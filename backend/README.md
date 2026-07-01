@@ -28,7 +28,7 @@ Health check.
 
 <br>
 
-## GET /api/v1/cards?offset=0&limit=10
+## GET /api/v1/cards?offset=0&limit=10&paginate=true
 
 List all credit cards with pagination.
 
@@ -36,6 +36,7 @@ List all credit cards with pagination.
 
 - `offset` (int, default 0) — skip this many cards
 - `limit` (int, default 10) — max cards to return
+- `paginate` (bool, default false) - return by one batch
 
 **Response:**
 
@@ -51,7 +52,7 @@ List all credit cards with pagination.
         "bank": "Alliance Bank"
     }
   ],
-  "total": 17
+  "total": 2
 }
 ```
 

@@ -205,8 +205,8 @@
 }
 
 .stack-row img {
-    height: 28px;
-    width: auto;
+    height: auto;
+    width: 32px;
     opacity: 0.55;
     filter: grayscale(1);
     transition: opacity 0.15s, filter 0.15s;

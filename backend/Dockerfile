@@ -11,9 +11,6 @@ COPY pyproject.toml uv.lock ./
 # Install dependencies
 RUN uv sync --frozen --no-install-project
 
-# Copy sql and data files
-COPY sql/ ./sql/
-
 # Copy source code
 COPY src/ ./src/
 

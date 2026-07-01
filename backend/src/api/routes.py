@@ -130,11 +130,14 @@ async def ask(request: Request, user_request: AskRequest):
 			raise HTTPException(status_code=503, detail="LLM returned no response.")
 
 		final_card = answer.splitlines()[0].strip()
-		if final_card:
+		if final_card and final_card != "N/A":
 			final_card = json.loads(
 				(await mcp.call_tool("fetch_card_by_title", {"card_title": final_card}))
 				.content[0].text
 			)
+			break
+		elif final_card == "N/A":
+			final_card = {"card_title": "N/A", "bank": "N/A", "min_annual_income": "N/A"}
 			break
 		else:
 			if i < 2:
@@ -143,6 +146,10 @@ async def ask(request: Request, user_request: AskRequest):
 			raise HTTPException(status_code=503,
 				detail="LLM response did not contain a valid card title after 3 attempts.")
 	try:
+		match_scores = (matched_card_titles[final_card["card_title"]]
+			if final_card and final_card["card_title"] in matched_card_titles
+			else 0
+		)
 		return AskResponse(
 			answer=answer,
 			final_card=final_card,
@@ -154,7 +161,7 @@ async def ask(request: Request, user_request: AskRequest):
 			],
 			provider=user_request.llm_provider,
 			top_k=user_request.top_k,
-			match_scores=matched_card_titles[final_card["card_title"]]
+			match_scores=match_scores
 		)
 	except ValidationError as code:
 		error_messages = [f"{' -> '.join(map(str, err['loc']))}: {err['msg']} ({err['type']})"

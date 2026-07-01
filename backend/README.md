@@ -117,7 +117,7 @@ The RAG chat endpoint. Sends a question and gets an AI-generated answer backed b
 **Fields:**
 
 - `question` (string, required, 1–500 chars) — the user's query
-- `top_k` (int, default 3, range 1–17) — how many cards to use as context
+- `top_k` (int, default 7, range 1–10) — how many cards to use as context
 - `llm_provider` (string, default "gemini-3.1-flash-lite")
   - gemini models
     - `"gemini-3.1-flash-lite"`
@@ -139,7 +139,7 @@ The RAG chat endpoint. Sends a question and gets an AI-generated answer backed b
   ],
   "provider": "gemini-3.1-flash-lite",
   "top_k": 7,
-  "match_score": 66
+  "match_scores": 66
 }
 ```
 
@@ -150,7 +150,7 @@ The RAG chat endpoint. Sends a question and gets an AI-generated answer backed b
 - `cards_used` (array) — which cards informed the answer
 - `provider` (string) — which LLM was used
 - `top_k` (int) — how many cards were considered
-- `match_score` (int) — cosine similarity score of final card
+- `match_scores` (int) — cosine similarity score of final card
 
 <br>
 

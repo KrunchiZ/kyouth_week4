@@ -12,7 +12,7 @@ class AskRequest(BaseModel):
 		"gemini-3.5-flash",
 		"llama3.2",
 		"gemma3:1b",
-		] = "llama3.2"
+		] = "gemini-3.1-flash-lite"
 
 
 class CardSummary(BaseModel):

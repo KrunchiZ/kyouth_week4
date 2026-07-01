@@ -78,7 +78,7 @@ async def get_banks():
 async def ask_ai(
     question: str,
     top_k: int = 3,
-    llm_provider: str = "gemini",
+    llm_provider: str = "gemini-3.1-flash-lite",
 ):
     """POST /api/v1/ask"""
 
@@ -88,7 +88,7 @@ async def ask_ai(
         "llm_provider": llm_provider,
     }
 
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=400) as client:
         response = await client.post(
             f"{BACKEND_URL}/api/v1/ask",
             json=payload,

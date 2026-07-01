@@ -1,33 +1,144 @@
 .chat-box{
-
     display:flex;
-
     flex-direction:column;
-
     gap:15px;
 }
 
 textarea{
-
     min-height:120px;
-
     padding:15px;
 }
 
+/* ===== Controls row ===== */
+
+.chat-controls {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.control-group label {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.control-group select {
+    padding: 10px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+    min-width: 180px;
+}
+
 #askBtn{
-
     width:150px;
-
     padding:12px;
 }
 
+#askBtn:hover {
+    background: #1e40af;
+}
+
+#loading {
+    margin-top: 16px;
+    color: #64748b;
+    font-style: italic;
+}
+
 #answer{
-
     margin-top:30px;
-
     background:white;
-
     padding:20px;
-
     border-radius:8px;
+}
+
+/* Hide answer box when empty */
+#answer:empty {
+    display: none;
+}
+
+/* Card result panel below the answer */
+#card-result {
+    margin-top: 24px;
+}
+
+#card-result:empty {
+    display: none;
+}
+
+.provider-info {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f1f5f9;
+    white-space: normal;
+}
+
+/* ===== Recommended card panel ===== */
+
+.card-result-title {
+    margin: 28px 0 12px;
+    font-size: 16px;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.card-detail {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 28px;
+}
+
+.card-detail-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.card-detail-header h2 { margin: 0; font-size: 20px; }
+
+.bank-badge {
+    background: #eff6ff;
+    color: #2563eb;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.detail-section h3 {
+    margin: 0 0 8px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #64748b;
+}
+
+.detail-section p {
+    margin: 0;
+    line-height: 1.6;
+    color: #1e293b;
+    font-size: 14px;
 }

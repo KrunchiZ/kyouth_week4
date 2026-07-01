@@ -1,65 +1,107 @@
 {% extends "base.html" %}
 
-{% block title %}
-AI Chatbot
-{% endblock %}
+{% block title %}Ask AI{% endblock %}
 
 {% block styles %}
-
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css"
+    integrity="sha512-jnSuA4Ss2PkkikSOLtYs8BlYIeeIK1h99ty4YfvRPAlzr377vr3CXDb7sb7eEEBYjDtcYj+AjBH3FLv5uSJuXg=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+/>
 <link rel="stylesheet" href="/static/css/chatbot.css">
-
 {% endblock %}
 
 {% block content %}
 
-<h1>Ask Our AI</h1>
+<div class="chat-page">
 
-<div class="chat-box">
+    <!-- ── Scrollable log ── -->
+    <div class="chat-log" id="chatLog">
 
-    <textarea id="question" placeholder="Ask something..."></textarea>
-
-    <div class="chat-controls">
-
-        <div class="control-group">
-            <label for="modelSelect">Model</label>
-            <select id="modelSelect">
-                <optgroup label="Gemini">
-                    <option value="gemini-3.1-flash-lite" selected>Gemini 3.1 Flash Lite</option>
-                    <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
-                    <option value="gemini-3.5-flash">Gemini 3.5 Flash</option>
-                </optgroup>
-                <optgroup label="Ollama (Local)">
-                    <option value="llama3.2">Llama 3.2</option>
-                    <option value="gemma3:1b">Gemma 3 1B</option>
-                </optgroup>
-            </select>
+        <!-- Empty state shown before first question -->
+        <div class="chat-empty" id="chatEmpty">
+            <p class="chat-empty-eyebrow">AI Credit Card Advisor</p>
+            <h2 class="chat-empty-heading">What are you looking for in a credit card?</h2>
+            <p class="chat-empty-sub">Tell us your monthly income and ask anything — cashback, travel perks, low fees, eligibility requirements.</p>
         </div>
 
-        <div class="control-group">
-            <label for="topK">Cards used (top_k)</label>
-            <select id="topK">
-                <option value="1">1</option>
-                <option value="3" selected>3</option>
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="17">17</option>
-            </select>
+        <!-- Q&A entries injected here by JS -->
+        <div id="chatEntries"></div>
+
+        <!-- Download button — always rendered, JS enables it -->
+        <div class="chat-download-row" id="chatDownloadRow">
+            <button class="btn btn-outline-secondary btn-sm" id="downloadBtn" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="me-1" viewBox="0 0 16 16">
+                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+                    <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+                </svg>
+                Download session
+            </button>
         </div>
 
-    <button id="askBtn"> Ask </button>
+    </div>
+
+    <!-- ── Fixed input panel ── -->
+    <div class="chat-input-panel" id="chatInputPanel">
+        <div class="chat-input-inner">
+
+            <div class="row g-2 align-items-end">
+
+                <!-- Income bracket -->
+                <div class="col-12 col-sm-auto">
+                    <label class="form-label input-label" for="incomeBracket">Monthly income</label>
+                    <select class="form-select input-select" id="incomeBracket">
+                        <option value="" disabled selected>Select range</option>
+                        <option value="RM1–1,000">RM1 – RM1,000</option>
+                        <option value="RM1,001–2,000">RM1,001 – RM2,000</option>
+                        <option value="RM2,001–3,000">RM2,001 – RM3,000</option>
+                        <option value="RM3,001–4,000">RM3,001 – RM4,000</option>
+                        <option value="RM4,001–5,000">RM4,001 – RM5,000</option>
+                        <option value="RM5,001–6,000">RM5,001 – RM6,000</option>
+                        <option value="RM6,001–7,000">RM6,001 – RM7,000</option>
+                        <option value="RM7,001–8,000">RM7,001 – RM8,000</option>
+                        <option value="RM8,001–9,000">RM8,001 – RM9,000</option>
+                        <option value="RM9,001–10,000">RM9,001 – RM10,000</option>
+                        <option value="RM10,001+">RM10,001 and above</option>
+                    </select>
+                </div>
+
+                <!-- Question -->
+                <div class="col">
+                    <label class="form-label input-label" for="question">Your question</label>
+                    <textarea
+                        class="form-control input-textarea"
+                        id="question"
+                        rows="1"
+                        placeholder="e.g. Which card gives the most cashback on groceries?"
+                    ></textarea>
+                </div>
+
+                <!-- Ask button -->
+                <div class="col-12 col-sm-auto">
+                    <button class="btn btn-ask w-100" id="askBtn">Ask</button>
+                </div>
+
+            </div>
+
+            <!-- Validation message -->
+            <div class="input-error d-none" id="inputError"></div>
+
+        </div>
+    </div>
 
 </div>
-
-<div id="loading"></div>
-
-<div id="answer"></div>
-
-<div id="card-result"></div>
 
 {% endblock %}
 
 {% block scripts %}
-
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"
+    integrity="sha512-7Pi/otdlbbCR+LnW+F7PwFcSDJOuUJB3OxtEHbg4vSMvzvJjde4Po1v4BR9Gdc9aXNUNFVUY+SK51wWT8WF9Aw=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+></script>
 <script src="/static/js/chatbot.js"></script>
-
 {% endblock %}

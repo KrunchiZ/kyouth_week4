@@ -145,7 +145,12 @@ async def ask(request: Request, user_request: AskRequest):
 		return AskResponse(
 			answer=answer,
 			final_card=final_card,
-			cards_used=[CardSummary(**{"card_title": c["card_title"], "bank": c["bank"]}) for c in cards],
+			cards_used=[CardSummary(**{
+					"card_title": c["card_title"],
+					"bank": c["bank"],
+					"min_annual_income": c["min_annual_income"]
+				}) for c in cards
+			],
 			provider=user_request.llm_provider,
 			top_k=user_request.top_k,
 		)

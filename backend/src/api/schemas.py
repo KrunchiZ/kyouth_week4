@@ -18,6 +18,7 @@ class AskRequest(BaseModel):
 class CardSummary(BaseModel):
 	card_title: str
 	bank: str
+	min_annual_income: str
 
 
 class AskResponse(BaseModel):

@@ -17,16 +17,19 @@ async def lifespan(app: FastAPI):
         _ensure_gemini_client()
     except RuntimeError:
         pass  # API key not available locally — fine for dev
-    
-    logging.info("DB server path: %s", DB_SERVER_PATH.resolve())
-    app.state.mcp_client = Client(DB_SERVER_PATH.resolve())
-    await app.state.mcp_client.__aenter__()
+    try:
+        logging.info("DB server path: %s", DB_SERVER_PATH.resolve())
+        app.state.mcp_client = Client(DB_SERVER_PATH.resolve())
+        await app.state.mcp_client.__aenter__()
 
-    logging.info("Booting up local RAG matrix...")
-    embedder = SentenceTransformer("all-MiniLM-L6-v2")
-    cards = load_cards(DB_PATH)
-    initialize_rag_context(cards, embedder)
-    logging.info("RAG matrix initialized and cached in RAM!")
+        logging.info("Booting up local RAG matrix...")
+        embedder = SentenceTransformer("all-MiniLM-L6-v2")
+        cards = load_cards(DB_PATH)
+        initialize_rag_context(cards, embedder)
+        logging.info("RAG matrix initialized and cached in RAM!")
+    except Exception as code:
+        logging.error("{code}")
+        raise code
     yield
 
     logging.info("Shutting down RAG server...")

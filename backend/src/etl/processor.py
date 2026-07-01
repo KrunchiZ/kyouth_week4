@@ -165,7 +165,7 @@ def get_all_elements_text(tag) -> str:
 
 def get_table_text(tag) -> str:
 	caption = tag.find("caption")
-	value: str = caption.get_text(separator=" ", strip=True) +"\n" if caption else ""
+	value: str = "| " + caption.get_text(separator=" ", strip=True) + " |\n" if caption else ""
 	value += table_to_markdown(tag)
 	return value
 

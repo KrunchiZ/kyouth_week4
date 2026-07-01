@@ -15,6 +15,7 @@ services:
       - app-net
     volumes:
       - ./backend/data/:/app/data:ro
+      - ./backend/sql:/app/sql:ro
     restart: unless-stopped
     depends_on:
       - ollama

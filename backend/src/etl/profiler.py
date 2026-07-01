@@ -3,7 +3,7 @@ import sqlite3
 import logging
 from pathlib import Path
 
-QUERY_DIR = Path("../../../sql")
+QUERY_DIR = Path("../../sql")
 COUNT_TOTAL_CARDS = QUERY_DIR / "count_total_cards.sql"
 COUNT_CARDS = QUERY_DIR / "count_cards.sql"
 COUNT_CATEGORIES = QUERY_DIR / "count_categories.sql"

@@ -14,7 +14,7 @@ logging.basicConfig(
 
 load_dotenv()
 DEV = os.getenv("DEV") == "true"
-QUERY_DIR = Path("../../../sql") if DEV else Path("/app/sql")
+QUERY_DIR = Path("../../sql") if DEV else Path("/app/sql")
 OPEN_TABLE_QUERY = QUERY_DIR / "open_table.sql"
 INSERT_FIELDS_QUERY = QUERY_DIR / "insert_fields.sql"
 GET_CONTENT_HASH_QUERY = QUERY_DIR / "get_content_hash.sql"

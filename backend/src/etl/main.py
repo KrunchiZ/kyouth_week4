@@ -9,10 +9,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 DEV = os.getenv("DEV") == "true"
-SOURCE_DIR = Path("../../../data/0_source") if DEV else Path("/app/data/0_source")
-BRONZE_DIR = Path("../../../data/1_bronze") if DEV else Path("/app/data/1_bronze")
-SILVER_DIR = Path("../../../data/2_silver") if DEV else Path("/app/data/2_silver")
-GOLD_DIR = Path("../../../data/3_gold") if DEV else Path("/app/data/3_gold")
+SOURCE_DIR = Path("../../data/0_source") if DEV else Path("/app/data/0_source")
+BRONZE_DIR = Path("../../data/1_bronze") if DEV else Path("/app/data/1_bronze")
+SILVER_DIR = Path("../../data/2_silver") if DEV else Path("/app/data/2_silver")
+GOLD_DIR = Path("../../data/3_gold") if DEV else Path("/app/data/3_gold")
 DB_NAME = "credit_cards.db"
 
 

@@ -170,16 +170,14 @@
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ============================================================
-   Pagination
-   ============================================================ */
 
 .pagination-bar {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 20px;
-    margin-top: 32px;
+    margin-top: 0;
+    margin-bottom: 20px;
 }
 
 .btn-page {

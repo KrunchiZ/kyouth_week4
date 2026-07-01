@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}Browse Cards{% endblock %}
+{% block body_class %}page-dashboard{% endblock %}
 
 {% block styles %}
 <link
@@ -75,6 +76,13 @@
 
     </div>
 
+    <!-- ── Pagination ── -->
+    <div class="pagination-bar" id="paginationBar">
+        <button class="btn btn-page" id="prevBtn" disabled>← Previous</button>
+        <span class="page-info" id="pageInfo"></span>
+        <button class="btn btn-page" id="nextBtn" disabled>Next →</button>
+    </div>
+
     <!-- ── Card grid ── -->
     <div id="cardGrid" class="row g-3">
         <!-- injected by dashboard.js -->
@@ -89,13 +97,6 @@
     <div id="gridLoading" class="grid-loading">
         <div class="grid-spinner"></div>
         Loading cards…
-    </div>
-
-    <!-- ── Pagination ── -->
-    <div class="pagination-bar" id="paginationBar">
-        <button class="btn btn-page" id="prevBtn" disabled>← Previous</button>
-        <span class="page-info" id="pageInfo"></span>
-        <button class="btn btn-page" id="nextBtn" disabled>Next →</button>
     </div>
 
     {% endif %}

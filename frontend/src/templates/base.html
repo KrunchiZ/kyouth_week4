@@ -7,6 +7,10 @@
 
     <title>{% block title %}Credit Card Advisor{% endblock %}</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="/static/css/style.css">
 
     {% block styles %}{% endblock %}
@@ -14,14 +18,16 @@
 
 <body>
 
-<header>
+<header class="site-header">
 
-    <h2>💳 Credit Card Advisor</h2>
+    <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-name">Credit Card Advisor</span>
+    </a>
 
-    <nav>
-        <a href="/">Home</a>
-        <a href="/dashboard">Dashboard</a>
-        <a href="/chatbot">Chatbot</a>
+    <nav class="site-nav">
+        <a href="/chatbot">Ask AI</a>
+        <a href="/dashboard">Browse Cards</a>
     </nav>
 
 </header>
@@ -34,10 +40,8 @@
 
 </main>
 
-<footer>
-
-    <p>© 2026 Credit Card Advisor</p>
-
+<footer class="site-footer">
+    <p>&copy; 2026 Credit Card Advisor &middot; Card data collected manually, may not reflect current bank terms.</p>
 </footer>
 
 {% block scripts %}

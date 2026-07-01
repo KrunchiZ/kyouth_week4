@@ -77,7 +77,7 @@ def retrieve_top_context(user_query: str, top_k: int) -> list[dict]:
 	top_indices = similarity_scores.argsort()[-top_k:][::-1]
 	return [{
 			"chunk": _chunks[idx],
-			"score": int(similarity_scores[idx] * 100)
+			"score": int(max(0, (similarity_scores[idx] * 100)))
 		} for idx in top_indices
 	]
 

@@ -63,10 +63,10 @@ def initialize_rag_context(database_records: list[dict],
 				len(database_records))
 
 
-def retrieve_top_context(user_query: str, top_k: int) -> list[str]:
+def retrieve_top_context(user_query: str, top_k: int) -> list[dict]:
 	"""Match the given query against pre-computed chunk vectors using cosine similarity.
 
-	Returns the top-K matching chunk strings.
+	Returns the top-K matching chunk strings with their similarity scores, sorted in descending order.
 	"""
 	if _embedder is None or _chunks is None:
 		logging.error("RAG context not initialized — run lifespan first")
@@ -75,22 +75,29 @@ def retrieve_top_context(user_query: str, top_k: int) -> list[str]:
 	query_vector = _embedder.encode([user_query])
 	similarity_scores = cosine_similarity(query_vector, _chunk_vectors)[0]
 	top_indices = similarity_scores.argsort()[-top_k:][::-1]
-	return [_chunks[idx] for idx in top_indices]
+	return [{
+			"chunk": _chunks[idx],
+			"score": int(similarity_scores[idx] * 100)
+		} for idx in top_indices
+	]
 
 
-def extract_card_titles(matched_chunks: list[str]) -> list[str]:
+def extract_card_titles(matched_chunks: list[dict]) -> dict:
 	"""Extract unique card titles from matched chunks, preserving order.
 
-	Chunks are formatted as: "Card: <title> (<bank>) | Category: ..."
-	Returns just the card title without the bank parenthetical.
+	Chunks are formatted as: {
+		"chunk": "Card: <title> (<bank>) | Category: ...",
+		"score": <score>
+	}
+	Returns a dictionary mapping card titles to their corresponding scores.
 	"""
 	seen_titles = set()
-	ordered_titles = []
+	ordered_titles = {}
 	for chunk in matched_chunks:
 		# "Card: Title (Bank) | Category: ..."
-		title_part = chunk.split(" | ")[0]  # "Card: Title (Bank)"
-		title = title_part.replace("Card: ", "").rsplit(" (", 1)[0].strip()
-		if title not in seen_titles:
-			seen_titles.add(title)
-			ordered_titles.append(title)
+		title_part = chunk["chunk"].split(" | ")[0]  # "Card: Title (Bank)"
+		card_title = title_part.replace("Card: ", "").rsplit(" (", 1)[0].strip()
+		if card_title not in seen_titles:
+			seen_titles.add(card_title)
+			ordered_titles[card_title] = chunk["score"]
 	return ordered_titles

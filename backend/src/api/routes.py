@@ -96,7 +96,7 @@ async def ask(request: Request, user_request: AskRequest):
 		if not current_batch:
 			break
 		title_to_card = {c["card_title"]: c for c in current_batch}
-		matched_cards = [title_to_card[t] for t in matched_card_titles if t in title_to_card]
+		matched_cards = [title_to_card[t] for t in matched_card_titles.keys() if t in title_to_card]
 		cards.extend(matched_cards)
 		if len(current_batch) < 10:
 			break
@@ -109,6 +109,7 @@ async def ask(request: Request, user_request: AskRequest):
 			cards_used=[],
 			provider=user_request.llm_provider,
 			top_k=user_request.top_k,
+			match_scores=0
 		)
 
 	# 3. Build prompt
@@ -153,6 +154,7 @@ async def ask(request: Request, user_request: AskRequest):
 			],
 			provider=user_request.llm_provider,
 			top_k=user_request.top_k,
+			match_scores=matched_card_titles[final_card["card_title"]]
 		)
 	except ValidationError as code:
 		error_messages = [f"{' -> '.join(map(str, err['loc']))}: {err['msg']} ({err['type']})"

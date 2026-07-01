@@ -27,6 +27,7 @@ class AskResponse(BaseModel):
 	cards_used: list[CardSummary]
 	provider: str
 	top_k: int
+	match_scores: int
 
 
 class CardsListResponse(BaseModel):

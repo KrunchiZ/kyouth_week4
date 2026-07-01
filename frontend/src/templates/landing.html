@@ -4,29 +4,92 @@
 Home
 {% endblock %}
 
+{% block styles %}
+<link rel="stylesheet" href="/static/css/landing.css">
+{% endblock %}
+
 {% block content %}
 
 <section class="hero">
-
-    <h1>Find Your Perfect Credit Card</h1>
-
-    <p>
-        Compare Malaysian credit cards and ask our AI assistant
-        for recommendations.
+    <p class="eyebrow">Malaysian credit cards, decoded</p>
+    <h1>Skip the fine print.<br>Ask for the card that fits.</h1>
+    <p class="hero-sub">
+        Credit card terms are full of jargon most banks don't bother explaining.
+        Tell our AI advisor your situation in plain words, and get a straight
+        answer &mdash; backed by real card data, not marketing copy.
     </p>
+</section>
 
-    <div class="buttons">
-
-        <a class="btn" href="/dashboard">
-            Browse Cards
-        </a>
-
-        <a class="btn secondary" href="/chatbot">
-            Ask AI
-        </a>
-
+<section class="how-it-works">
+    <div class="step">
+        <span class="step-label">Describe your situation</span>
+        <p>Income range, spending habits, what you're looking for &mdash; in your own words.</p>
     </div>
+    <div class="step">
+        <span class="step-label">AI reads the fine print for you</span>
+        <p>We match your answer against real card terms and requirements, not guesses.</p>
+    </div>
+    <div class="step">
+        <span class="step-label">Get one clear recommendation</span>
+        <p>A single best-fit card, explained plainly, with the details that actually matter.</p>
+    </div>
+</section>
 
+<section class="features">
+    <h2>Built to be understood, not just used</h2>
+    <div class="feature-grid">
+        <div class="feature">
+            <h3>Jargon, translated</h3>
+            <p>"Minimum spend," "tiered cashback caps," "invitation only" &mdash; we explain what it actually means for you.</p>
+        </div>
+        <div class="feature">
+            <h3>Answers in plain English</h3>
+            <p>Ask a question the way you'd ask a friend. No filters, no forms to decode first.</p>
+        </div>
+        <div class="feature">
+            <h3>Real card data</h3>
+            <p>Every recommendation is grounded in actual terms collected from each bank &mdash; not summarized guesswork.</p>
+        </div>
+        <div class="feature">
+            <h3>One recommendation, not twenty tabs</h3>
+            <p>You get the card that fits your situation, not a wall of comparisons to sort through yourself.</p>
+        </div>
+    </div>
+</section>
+
+{% if teaser_cards %}
+<section class="teaser">
+    <div class="teaser-head">
+        <h2>A few cards in the database</h2>
+        <a class="teaser-link" href="/dashboard">Browse all cards &rarr;</a>
+    </div>
+    <div class="teaser-grid">
+        {% for card in teaser_cards %}
+        <a class="teaser-card" href="/dashboard/{{ card.card_title }}">
+            <span class="teaser-bank">{{ card.bank }}</span>
+            <h3>{{ card.card_title }}</h3>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section class="stack">
+    <p class="stack-label">Built with</p>
+    <div class="stack-row">
+        <img src="/static/icons/fastapi-plain.svg" alt="FastAPI" title="FastAPI">
+        <img src="/static/icons/python-plain.svg" alt="Python" title="Python">
+        <img src="/static/icons/sqlite-plain.svg" alt="SQLite" title="SQLite">
+        <img src="/static/icons/jinja-original.svg" alt="Jinja2" title="Jinja2">
+        <img src="/static/icons/chartjs-plain.svg" alt="Chart.js" title="Chart.js">
+        <img src="/static/icons/docker-plain.svg" alt="Docker" title="Docker">
+    </div>
+</section>
+
+<section class="final-cta">
+    <h2>Ready to find your card?</h2>
+    <p>Answer a couple of quick questions and get a recommendation in seconds.</p>
+    <a class="btn" href="/chatbot">Let's Get Started</a>
 </section>
 
 {% endblock %}

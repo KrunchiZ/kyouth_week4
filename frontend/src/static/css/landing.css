@@ -1,0 +1,253 @@
+/* ============================================================
+   Hero
+   ============================================================ */
+
+.hero {
+    padding: 88px 0 64px;
+    max-width: 720px;
+}
+
+.eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 18px;
+}
+
+.hero h1 {
+    font-size: 46px;
+    letter-spacing: -0.01em;
+    margin-bottom: 22px;
+}
+
+.hero-sub {
+    font-size: 17px;
+    max-width: 560px;
+}
+
+/* ============================================================
+   How it works
+   ============================================================ */
+
+.how-it-works {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    padding: 40px 0 72px;
+    border-top: 1px solid var(--border);
+    counter-reset: step;
+}
+
+.step {
+    position: relative;
+    padding-top: 36px;
+}
+
+.step::before {
+    counter-increment: step;
+    content: "0" counter(step);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-faint);
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.step-label {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 17px;
+    margin-bottom: 8px;
+}
+
+.step p {
+    font-size: 14.5px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* ============================================================
+   Features
+   ============================================================ */
+
+.features {
+    padding: 56px 0;
+    border-top: 1px solid var(--border);
+}
+
+.features h2 {
+    font-size: 26px;
+    margin-bottom: 32px;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.feature {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 24px;
+}
+
+.feature h3 {
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.feature p {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* ============================================================
+   Card teaser
+   ============================================================ */
+
+.teaser {
+    padding: 56px 0;
+    border-top: 1px solid var(--border);
+}
+
+.teaser-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 24px;
+}
+
+.teaser-head h2 {
+    font-size: 22px;
+    margin: 0;
+}
+
+.teaser-link {
+    text-decoration: none;
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.teaser-link:hover { color: var(--accent-dark); }
+
+.teaser-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.teaser-card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 22px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.teaser-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(11, 18, 32, 0.06);
+}
+
+.teaser-bank {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--mint);
+    background: var(--mint-soft);
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin-bottom: 12px;
+}
+
+.teaser-card h3 {
+    font-size: 15.5px;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* ============================================================
+   Tech stack strip
+   ============================================================ */
+
+.stack {
+    padding: 44px 0;
+    border-top: 1px solid var(--border);
+    text-align: center;
+}
+
+.stack-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 20px;
+}
+
+.stack-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 36px;
+    flex-wrap: wrap;
+}
+
+.stack-row img {
+    height: 28px;
+    width: auto;
+    opacity: 0.55;
+    filter: grayscale(1);
+    transition: opacity 0.15s, filter 0.15s;
+}
+
+.stack-row img:hover {
+    opacity: 1;
+    filter: grayscale(0);
+}
+
+/* ============================================================
+   Final CTA band
+   ============================================================ */
+
+.final-cta {
+    margin: 56px 0 0;
+    padding: 56px 40px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--ink) 0%, #1B2A4A 100%);
+    text-align: center;
+}
+
+.final-cta h2 {
+    color: white;
+    font-size: 26px;
+}
+
+.final-cta p {
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 26px;
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+
+@media (max-width: 760px) {
+    .hero h1 { font-size: 32px; }
+    .how-it-works,
+    .feature-grid,
+    .teaser-grid {
+        grid-template-columns: 1fr;
+    }
+}

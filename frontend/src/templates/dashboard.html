@@ -1,71 +1,123 @@
 {% extends "base.html" %}
 
-{% block title %}
-Dashboard
-{% endblock %}
+{% block title %}Browse Cards{% endblock %}
 
 {% block styles %}
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css"
+    integrity="sha512-jnSuA4Ss2PkkikSOLtYs8BlYIeeIK1h99ty4YfvRPAlzr377vr3CXDb7sb7eEEBYjDtcYj+AjBH3FLv5uSJuXg=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+/>
 <link rel="stylesheet" href="/static/css/dashboard.css">
 {% endblock %}
 
 {% block content %}
 
-<h1>Available Credit Cards</h1>
+<div class="dash-page">
 
-{% if error %}
-<div class="error-banner">
-    ⚠️ {{ error }}
-</div>
-{% endif %}
-
-<div class="dashboard-grid">
-
-    {% if not error %}
-    <div class="chart-panel">
-        <h3>Cards by Bank</h3>
-        <canvas id="bankChart"></canvas>
+    <div class="dash-header">
+        <h1 class="dash-title">Browse Cards</h1>
+        <p class="dash-sub">{{ cards | length }} cards across {{ banks | length }} banks</p>
     </div>
+
+    {% if error %}
+    <div class="dash-error">⚠️ {{ error }}</div>
     {% endif %}
 
-    <div class="cards-panel">
+    {% if not error %}
 
-        {% if banks %}
-        <select id="bankFilter">
-            <option value="">All Banks</option>
-            {% for bank in banks %}
-            <option value="{{ bank }}">{{ bank }}</option>
-            {% endfor %}
-        </select>
-        {% endif %}
-
-        <input id="search" placeholder="Search card...">
-
-        <div id="cardContainer">
-        {% for card in cards %}
-        <div class="card" data-bank="{{ card.bank }}">
-            <h3>{{ card.card_title }}</h3>
-            <p>{{ card.bank }}</p>
-            <button class="view-btn" data-title="{{ card.card_title }}">View Details</button>
+    <!-- ── Charts row ── -->
+    <div class="row g-4 mb-4">
+        <div class="col-12 col-md-6">
+            <div class="chart-panel">
+                <p class="chart-label">Cards by bank</p>
+                <canvas id="bankChart"></canvas>
+            </div>
         </div>
-        {% else %}
-        {% if not error %}
-        <p class="empty-state">No cards available right now.</p>
-        {% endif %}
-        {% endfor %}
+    </div>
+
+    <!-- ── Filter bar ── -->
+    <div class="filter-bar row g-2 mb-3">
+
+        <div class="col-12 col-sm-6 col-md-4">
+            <select class="form-select filter-select" id="filterBank">
+                <option value="">All Banks</option>
+                {% for bank in banks %}
+                <option value="{{ bank }}">{{ bank }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4">
+            <select class="form-select filter-select" id="filterIncome">
+                <option value="">All Income Levels</option>
+                <option value="24000">RM24,000</option>
+                <option value="30000">RM30,000</option>
+                <option value="48000">RM48,000</option>
+                <option value="60000">RM60,000</option>
+                <option value="80000">RM80,000</option>
+                <option value="120000">RM120,000</option>
+                <option value="Any Business (Minimum 2 years)">Any Business (Min. 2 years)</option>
+                <option value="Invitation Only">Invitation Only</option>
+            </select>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4">
+            <input
+                class="form-control filter-select"
+                id="filterSearch"
+                type="search"
+                placeholder="Search card name…"
+            >
         </div>
 
     </div>
+
+    <!-- ── Card grid ── -->
+    <div id="cardGrid" class="row g-3">
+        <!-- injected by dashboard.js -->
+    </div>
+
+    <!-- Empty state -->
+    <div id="gridEmpty" class="grid-empty d-none">
+        No cards match your filters.
+    </div>
+
+    <!-- Loading state -->
+    <div id="gridLoading" class="grid-loading">
+        <div class="grid-spinner"></div>
+        Loading cards…
+    </div>
+
+    <!-- ── Pagination ── -->
+    <div class="pagination-bar" id="paginationBar">
+        <button class="btn btn-page" id="prevBtn" disabled>← Previous</button>
+        <span class="page-info" id="pageInfo"></span>
+        <button class="btn btn-page" id="nextBtn" disabled>Next →</button>
+    </div>
+
+    {% endif %}
 
 </div>
 
 {% endblock %}
 
 {% block scripts %}
-{% if not error %}
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"
+    integrity="sha512-7Pi/otdlbbCR+LnW+F7PwFcSDJOuUJB3OxtEHbg4vSMvzvJjde4Po1v4BR9Gdc9aXNUNFVUY+SK51wWT8WF9Aw=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+
+{% if not error %}
 <script>
-    const cardsData = {{ cards | tojson }};
+    const BANK_COUNTS = {{ bank_counts | tojson }};
 </script>
 {% endif %}
+
 <script src="/static/js/dashboard.js"></script>
 {% endblock %}

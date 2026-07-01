@@ -1,20 +1,38 @@
 import httpx
 from fastapi import APIRouter, Request
-from fastapi.responses import HTMLResponse
 from services.backend import get_cards, get_banks, get_card
 
 router = APIRouter()
+
+
+async def _fetch_all_cards_summary(batch_size: int = 10):
+    """Fetch all CardSummary records in batches using LIMIT/OFFSET."""
+    all_cards = []
+    offset = 0
+    for _ in range(50):  # safety cap
+        data = await get_cards(offset=offset, limit=batch_size)
+        batch = data.get("cards", [])
+        if not batch:
+            break
+        all_cards.extend(batch)
+        if len(batch) < batch_size:
+            break
+        offset += batch_size
+    return all_cards
 
 
 @router.get("/dashboard")
 async def dashboard(request: Request):
     cards = []
     banks = []
+    bank_counts = {}
     error = None
 
     try:
-        data = await get_cards()
-        cards = data["cards"]
+        cards = await _fetch_all_cards_summary()
+        for card in cards:
+            bank = card["bank"]
+            bank_counts[bank] = bank_counts.get(bank, 0) + 1
     except httpx.ConnectError:
         error = "Could not connect to the card service. Please try again later."
     except httpx.HTTPStatusError as e:
@@ -32,9 +50,10 @@ async def dashboard(request: Request):
     return request.app.state.templates.TemplateResponse(
         request, "dashboard.html",
         {
-            "cards": cards, 
-            "banks": banks, 
-            "error": error
+            "cards":       cards,
+            "banks":       banks,
+            "bank_counts": bank_counts,
+            "error":       error,
         }
     )
 
@@ -66,8 +85,8 @@ async def card_detail(request: Request, card_title: str):
     return request.app.state.templates.TemplateResponse(
         request, "card_detail.html",
         {
-            "card": card, 
-            "error": error
+            "card":  card,
+            "error": error,
         },
         status_code=status_code
     )

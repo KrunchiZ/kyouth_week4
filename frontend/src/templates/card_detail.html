@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ card.card_title if card else "Card Detail" }}
+{% endblock %}
+
+{% block styles %}
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css"
+    integrity="sha512-jnSuA4Ss2PkkikSOLtYs8BlYIeeIK1h99ty4YfvRPAlzr377vr3CXDb7sb7eEEBYjDtcYj+AjBH3FLv5uSJuXg=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+/>
+<link rel="stylesheet" href="/static/css/card_detail.css">
+{% endblock %}
+
+{% block content %}
+
+<div class="detail-page">
+
+    <a class="back-link" href="/dashboard">← Back to Browse</a>
+
+    {% if error %}
+    <div class="detail-error">⚠️ {{ error }}</div>
+
+    {% elif card %}
+
+    <div class="detail-header">
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+            <h1 class="detail-title">{{ card.card_title }}</h1>
+            <span class="detail-bank-badge">{{ card.bank }}</span>
+        </div>
+        {% if card.min_annual_income and card.min_annual_income != "N/A" %}
+        <p class="detail-income">
+            Min. annual income:
+            {% set inc = card.min_annual_income %}
+            {% if inc == "Invitation Only" or inc == "Any Business (Minimum 2 years)" %}
+                {{ inc }}
+            {% else %}
+                RM{{ "{:,}".format(inc | int) }}
+            {% endif %}
+        </p>
+        {% endif %}
+    </div>
+
+    <div class="row g-4 detail-grid">
+
+        {% set sections = [
+            ("Cashback",           card.cashback),
+            ("Petrol",             card.petrol),
+            ("Rewards",            card.rewards),
+            ("Travel",             card.travel),
+            ("Premium Perks",      card.premium_perks),
+            ("Balance Transfer",   card.balance_transfer),
+            ("Easy Payment Plans", card.easy_payment_plan),
+            ("Fees & Charges",     card.fees),
+            ("Requirements",       card.requirements),
+            ("Features",           card.features),
+        ] %}
+
+        {% for label, value in sections %}
+        {% if value and value != "N/A" %}
+        <div class="col-12 col-md-6">
+            <div class="detail-section">
+                <h3 class="detail-section-label">{{ label }}</h3>
+                <div class="detail-section-body">
+                    {{ value | replace("\n", "<br>") | safe }}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

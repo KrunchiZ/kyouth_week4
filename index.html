@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KadPilot — Presentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & tokens ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --ink:        #0B1220;
+    --ink-soft:   #1E2A3D;
+    --navy:       #0F172A;
+    --accent:     #3B5BFF;
+    --accent-soft:#EEF1FF;
+    --mint:       #16A34A;
+    --mint-soft:  #ECFDF3;
+    --border:     #E4E7EC;
+    --muted:      #64748B;
+    --faint:      #94A3B8;
+    --surface:    #FFFFFF;
+    --bg:         #F6F7F9;
+
+    --font-display: "Space Grotesk", system-ui, sans-serif;
+    --font-body:    "Inter", system-ui, sans-serif;
+    --font-mono:    "IBM Plex Mono", monospace;
+}
+
+html, body {
+    width: 100%; height: 100%;
+    font-family: var(--font-body);
+    background: var(--navy);
+    color: var(--surface);
+    overflow: hidden;
+}
+
+/* ── Deck shell ── */
+.deck {
+    width: 100vw; height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ── Slides ── */
+.slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    opacity: 0;
+    transform: translateX(48px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    pointer-events: none;
+}
+
+.slide-inner {
+    width: 100%;
+    max-width: 1100px;
+    padding: 48px 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.slide.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: all;
+}
+
+.slide.exit {
+    opacity: 0;
+    transform: translateX(-48px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* ── Backgrounds ── */
+.slide-dark   { background: var(--navy); }
+.slide-light  { background: var(--surface); color: var(--ink); }
+.slide-accent {
+    background: linear-gradient(135deg, #1B2A4A 0%, #0B1220 100%);
+}
+
+/* ── Progress bar ── */
+.progress {
+    position: fixed;
+    bottom: 0; left: 0;
+    height: 3px;
+    background: var(--accent);
+    transition: width 0.35s ease;
+    z-index: 100;
+}
+
+/* ── Nav dots ── */
+.nav-dots {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+}
+
+.dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.dot.active {
+    background: var(--accent);
+    transform: scale(1.4);
+}
+
+/* ── Slide counter ── */
+.slide-counter {
+    position: fixed;
+    bottom: 16px;
+    right: 32px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    z-index: 100;
+}
+
+/* ── Typography ── */
+.eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+}
+
+.eyebrow.mint { color: var(--mint); }
+
+h1.hero {
+    font-family: var(--font-display);
+    font-size: 76px;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+    max-width: 960px;
+}
+
+h1.hero .accent { color: var(--accent); }
+h1.hero .mint   { color: #4ADE80; }
+
+h2.slide-title {
+    font-family: var(--font-display);
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin-bottom: 20px;
+    max-width: 860px;
+}
+
+h2.slide-title.dark  { color: var(--ink); }
+
+.subtitle {
+    font-size: 20px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.65);
+    max-width: 680px;
+    line-height: 1.6;
+}
+
+.subtitle.dark { color: var(--muted); }
+
+/* ── Team tag ── */
+.team-tag {
+    margin-top: 48px;
+    display: flex;
+    gap: 12px;
+}
+
+.name-chip {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    padding: 6px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.6);
+}
+
+/* ── Brand mark ── */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 48px;
+}
+
+.brand-mark {
+    width: 36px; height: 26px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--mint) 100%);
+    position: relative;
+    flex-shrink: 0;
+}
+
+.brand-mark::after {
+    content: "";
+    position: absolute;
+    left: 6px; top: 11px;
+    width: 18px; height: 3px;
+    background: rgba(255,255,255,0.85);
+    border-radius: 2px;
+}
+
+.brand-name {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+/* ── Stat blocks ── */
+.stat-row {
+    display: flex;
+    gap: 40px;
+    margin-top: 40px;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stat-num {
+    font-family: var(--font-display);
+    font-size: 56px;
+    font-weight: 700;
+    color: #4ADE80;
+    line-height: 1;
+}
+
+.stat-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+}
+
+/* ── Problem cards ── */
+.problem-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 36px;
+    width: 100%;
+    max-width: 900px;
+}
+
+.problem-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.problem-card .icon {
+    font-size: 34px;
+    margin-bottom: 14px;
+    display: block;
+}
+
+.problem-card h3 {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.problem-card p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.6;
+}
+
+/* ── Solution flow ── */
+.flow {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    margin-top: 40px;
+    max-width: 860px;
+    width: 100%;
+}
+
+.flow-step {
+    flex: 1;
+    position: relative;
+    padding-right: 32px;
+}
+
+.flow-step::after {
+    content: "→";
+    position: absolute;
+    right: 8px;
+    top: 14px;
+    color: rgba(255,255,255,0.2);
+    font-size: 18px;
+}
+
+.flow-step:last-child::after { display: none; }
+
+.flow-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    margin-bottom: 10px;
+    display: block;
+}
+
+.flow-step h3 {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.flow-step p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.6;
+}
+
+/* ── Feature list ── */
+.feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 36px;
+    max-width: 720px;
+    width: 100%;
+}
+
+.feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px 24px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+}
+
+.feature-item .fi-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.feature-item h3 {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 6px;
+}
+
+.feature-item p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.5;
+}
+
+/* ── Tech pills ── */
+.tech-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 36px;
+}
+
+.tech-pill {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    padding: 7px 16px;
+    border-radius: 999px;
+    background: rgba(59,91,255,0.12);
+    border: 1px solid rgba(59,91,255,0.25);
+    color: #93AAFF;
+}
+
+.tech-pill.be {
+    background: rgba(22,163,74,0.12);
+    border-color: rgba(22,163,74,0.25);
+    color: #4ADE80;
+}
+
+/* ── Demo placeholder ── */
+.demo-frame {
+    width: 100%;
+    max-width: 1280px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 32px;
+    margin-top: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 360px;
+    position: relative;
+}
+
+.demo-label {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.demo-badge {
+    position: absolute;
+    top: 16px; right: 20px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(74,222,128,0.15);
+    border: 1px solid rgba(74,222,128,0.3);
+    color: #4ADE80;
+}
+
+/* ── Divider line ── */
+.rule {
+    width: 48px; height: 3px;
+    background: var(--accent);
+    border-radius: 2px;
+    margin-bottom: 28px;
+}
+
+.rule.mint { background: var(--mint); }
+
+/* ── Closing ── */
+.closing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 36px;
+    max-width: 640px;
+    width: 100%;
+}
+
+.closing-item {
+    padding: 22px 24px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    font-size: 15px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.5;
+}
+
+.closing-item strong {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 6px;
+    font-size: 17px;
+}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+    <!-- ── 1. Title ── -->
+    <div class="slide slide-dark active" data-slide="0">
+        <div class="slide-inner">
+        <div class="brand">
+            <div class="brand-mark"></div>
+            <span class="brand-name">KadPilot</span>
+        </div>
+        <p class="eyebrow">Credit Card Advisor</p>
+        <h1 class="hero">
+            Find the right card.<br>
+            <span class="mint">Without the jargon.</span>
+        </h1>
+        <p class="subtitle">An AI-powered platform that matches Malaysians to the right credit card — in plain language, not bank-speak.</p>
+        <div class="team-tag">
+            <span class="name-chip">Chiang</span>
+            <span class="name-chip">Hakimi</span>
+        </div>
+        </div>
+    
+    </div>
+
+    <!-- ── 2. The Problem ── -->
+    <div class="slide slide-dark" data-slide="1">
+        <div class="slide-inner">
+        <p class="eyebrow">The Problem</p>
+        <h2 class="slide-title">Credit cards are confusing by design.</h2>
+        <p class="subtitle">Most Malaysians don't pick the best card — they pick the one they understand.</p>
+        <div class="problem-grid">
+            <div class="problem-card">
+                <span class="icon">📄</span>
+                <h3>Dense fine print</h3>
+                <p>Terms like "tiered cashback caps" and "minimum spend thresholds" buried in T&Cs no one reads.</p>
+            </div>
+            <div class="problem-card">
+                <span class="icon">🔀</span>
+                <h3>Too many choices</h3>
+                <p>Dozens of cards across multiple banks, each with different benefits and eligibility rules.</p>
+            </div>
+            <div class="problem-card">
+                <span class="icon">❓</span>
+                <h3>No personal fit</h3>
+                <p>Comparison sites list features — but don't tell you which card actually fits your income and habits.</p>
+            </div>
+        </div>
+        </div>
+    
+    </div>
+
+    <!-- ── 3. The Solution ── -->
+    <div class="slide slide-dark" data-slide="2">
+        <div class="slide-inner">
+        <p class="eyebrow">The Solution</p>
+        <h2 class="slide-title">Ask in plain English.<br>Get one clear answer.</h2>
+        <p class="subtitle">KadPilot uses RAG-powered AI to match your situation to the right card — explained simply, every time.</p>
+        <div class="flow">
+            <div class="flow-step">
+                <span class="flow-num">01</span>
+                <h3>Tell us your situation</h3>
+                <p>Monthly income, what you're looking for — in your own words.</p>
+            </div>
+            <div class="flow-step">
+                <span class="flow-num">02</span>
+                <h3>AI reads the fine print</h3>
+                <p>We match against real card data, not marketing copy.</p>
+            </div>
+            <div class="flow-step">
+                <span class="flow-num">03</span>
+                <h3>One recommendation</h3>
+                <p>A best-fit card with a plain-English explanation of why.</p>
+            </div>
+        </div>
+        </div>
+    
+    </div>
+
+    <!-- ── 4. Recorded Demo ── -->
+    <div class="slide slide-dark" data-slide="3">
+        <div class="slide-inner">
+        <p class="eyebrow mint">Recorded Demo</p>
+        <h2 class="slide-title">See it in action.</h2>
+        <p class="subtitle">We'll walk through a real query — from question to recommendation.</p>
+        <div class="demo-frame">
+            <video controls height="100%" width="100%">
+                <source src="videos/demo.webm" type="video/webm; codecs=vp9">
+                <source src="videos/demo.mp4" type="video/mp4; codecs=avc1.42E01E">
+            </video>
+            <span class="demo-badge">● Recorded</span>
+        </div>
+        </div>
+    
+    </div>
+
+    <!-- ── 5. Key Features ── -->
+    <div class="slide slide-dark" data-slide="4">
+        <div class="slide-inner">
+        <div class="rule"></div>
+        <p class="eyebrow">What KadPilot does</p>
+        <h2 class="slide-title">Built around the user, not the bank.</h2>
+        <div class="feature-list">
+            <div class="feature-item">
+                <span class="fi-icon">💬</span>
+                <div>
+                    <h3>Conversational AI advisor</h3>
+                    <p>Ask follow-up questions naturally. KadPilot remembers your previous recommendations across the session.</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <span class="fi-icon">📊</span>
+                <div>
+                    <h3>Browse & compare cards</h3>
+                    <p>Filter by bank, income level, or search by name. Full card details with all terms laid out cleanly.</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <span class="fi-icon">📥</span>
+                <div>
+                    <h3>Export your session</h3>
+                    <p>Download your full conversation history and card recommendations as a JSON file to keep.</p>
+                </div>
+            </div>
+        </div>
+        </div>
+    
+    </div>
+
+    <!-- ── 6. Tech Stack ── -->
+    <div class="slide slide-dark" data-slide="5">
+        <div class="slide-inner">
+        <p class="eyebrow">Under the hood</p>
+        <h2 class="slide-title">A full-stack RAG pipeline — built in one week.</h2>
+        <p class="subtitle">Two services, one goal: fast, accurate, explainable recommendations.</p>
+        <div style="margin-top: 36px; display: flex; gap: 48px; align-items: flex-start;">
+            <div>
+                <p style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); margin-bottom: 14px;">Frontend</p>
+                <div class="tech-row" style="flex-direction: column; gap: 8px;">
+                    <span class="tech-pill">FastAPI + Jinja2</span>
+                    <span class="tech-pill">Bootstrap 5</span>
+                    <span class="tech-pill">Chart.js</span>
+                    <span class="tech-pill">Vanilla JS</span>
+                </div>
+            </div>
+            <div style="width: 1px; background: rgba(255,255,255,0.08); align-self: stretch; margin-top: 28px;"></div>
+            <div>
+                <p style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); margin-bottom: 14px;">Backend</p>
+                <div class="tech-row" style="flex-direction: column; gap: 8px;">
+                    <span class="tech-pill be">FastAPI + RAG Pipeline</span>
+                    <span class="tech-pill be">Sentence Transformers</span>
+                    <span class="tech-pill be">SQLite + MCP</span>
+                    <span class="tech-pill be">Gemini API / Ollama</span>
+                </div>
+            </div>
+            <div style="width: 1px; background: rgba(255,255,255,0.08); align-self: stretch; margin-top: 28px;"></div>
+            <div>
+                <p style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); margin-bottom: 14px;">Infra</p>
+                <div class="tech-row" style="flex-direction: column; gap: 8px;">
+                    <span class="tech-pill">Docker Compose</span>
+                    <span class="tech-pill">Docker Secrets</span>
+                </div>
+            </div>
+        </div>
+        </div>
+    
+    </div>
+
+    <!-- ── 7. Challenges & Learnings ── -->
+    <div class="slide slide-dark" data-slide="6">
+        <div class="slide-inner">
+        <p class="eyebrow">One week. Real constraints.</p>
+        <h2 class="slide-title">What we learned building fast.</h2>
+        <div class="closing-grid">
+            <div class="closing-item">
+                <strong>RAG over fine-tuning</strong>
+                Card data changes. Retrieval keeps answers grounded in current data without retraining.
+            </div>
+            <div class="closing-item">
+                <strong>Proxy everything</strong>
+                Browser → frontend → backend. Never expose the backend directly to the client.
+            </div>
+            <div class="closing-item">
+                <strong>UX first, features second</strong>
+                Hiding model controls from users was a deliberate call — complexity belongs in the backend.
+            </div>
+            <div class="closing-item">
+                <strong>Data quality matters</strong>
+                Manually scraped card data is imperfect. Good prompting can compensate, but only so far.
+            </div>
+        </div>
+        </div>
+    
+    </div>
+
+    <!-- ── 8. What's Next ── -->
+    <div class="slide slide-dark" data-slide="7">
+        <div class="slide-inner">
+        <p class="eyebrow">Roadmap</p>
+        <h2 class="slide-title">Where KadPilot goes from here.</h2>
+        <div class="problem-grid" style="grid-template-columns: repeat(2, 1fr); max-width: 640px;">
+            <div class="problem-card">
+                <span class="icon">🏦</span>
+                <h3>More banks</h3>
+                <p>Expand beyond 4 banks to cover the full Malaysian market.</p>
+            </div>
+            <div class="problem-card">
+                <span class="icon">🔄</span>
+                <h3>Automated data sync</h3>
+                <p>Replace manual scraping with scheduled updates to keep card terms current.</p>
+            </div>
+            <div class="problem-card">
+                <span class="icon">🧠</span>
+                <h3>Richer context</h3>
+                <p>Factor in spending habits and goals, not just income.</p>
+            </div>
+            <div class="problem-card">
+                <span class="icon">🌐</span>
+                <h3>Bahasa Malaysia support</h3>
+                <p>Serve users who prefer to ask questions in BM.</p>
+            </div>
+        </div>
+        </div>
+    
+    </div>
+
+    <!-- ── 9. Closing ── -->
+    <div class="slide slide-accent" data-slide="8">
+        <div class="slide-inner">
+        <div class="brand">
+            <div class="brand-mark"></div>
+            <span class="brand-name">KadPilot</span>
+        </div>
+        <h1 class="hero" style="font-size: 52px;">
+            The right card.<br>
+            <span class="accent">Explained simply.</span><br>
+            For everyone.
+        </h1>
+        <p class="subtitle">Built by Chiang & Hakimi in one week.</p>
+        <div class="stat-row" style="margin-top: 36px;">
+            <div class="stat">
+                <span class="stat-num">21</span>
+                <span class="stat-label">Cards indexed</span>
+            </div>
+            <div class="stat">
+                <span class="stat-num">4</span>
+                <span class="stat-label">Malaysian banks</span>
+            </div>
+            <div class="stat">
+                <span class="stat-num">1wk</span>
+                <span class="stat-label">Build time</span>
+            </div>
+        </div>
+        </div>
+    
+    </div>
+
+</div>
+
+<!-- Progress bar -->
+<div class="progress" id="progress"></div>
+
+<!-- Nav dots -->
+<div class="nav-dots" id="navDots"></div>
+
+<!-- Slide counter -->
+<div class="slide-counter" id="slideCounter"></div>
+
+<script>
+const slides    = document.querySelectorAll(".slide");
+const total     = slides.length;
+const progress  = document.getElementById("progress");
+const navDots   = document.getElementById("navDots");
+const counter   = document.getElementById("slideCounter");
+let current     = 0;
+let isAnimating = false;
+
+// Build dots
+slides.forEach((_, i) => {
+    const dot = document.createElement("div");
+    dot.className = "dot" + (i === 0 ? " active" : "");
+    dot.addEventListener("click", () => goTo(i));
+    navDots.appendChild(dot);
+});
+
+function goTo(index) {
+    if (isAnimating || index === current || index < 0 || index >= total) return;
+    isAnimating = true;
+
+    const prev = slides[current];
+    prev.classList.add("exit");
+    prev.classList.remove("active");
+
+    setTimeout(() => {
+        prev.classList.remove("exit");
+    }, 300);
+
+    current = index;
+    slides[current].classList.add("active");
+
+    // Update dots
+    document.querySelectorAll(".dot").forEach((d, i) => {
+        d.classList.toggle("active", i === current);
+    });
+
+    // Update progress
+    progress.style.width = `${((current + 1) / total) * 100}%`;
+
+    // Update counter
+    counter.textContent = `${current + 1} / ${total}`;
+
+    setTimeout(() => { isAnimating = false; }, 400);
+}
+
+function next() { goTo(current + 1); }
+function prev() { goTo(current - 1); }
+
+// Keyboard navigation
+document.addEventListener("keydown", e => {
+    if (e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === " ") { e.preventDefault(); next(); }
+    if (e.key === "ArrowLeft"  || e.key === "ArrowUp")                    { e.preventDefault(); prev(); }
+});
+
+// Click to advance (right half) or go back (left half)
+document.getElementById("deck").addEventListener("click", e => {
+    if (e.target.closest(".dot")) return;
+    e.clientX > window.innerWidth / 2 ? next() : prev();
+});
+
+// Touch swipe
+let touchX = 0;
+document.addEventListener("touchstart", e => { touchX = e.touches[0].clientX; });
+document.addEventListener("touchend",   e => {
+    const dx = touchX - e.changedTouches[0].clientX;
+    if (Math.abs(dx) > 40) dx > 0 ? next() : prev();
+});
+
+// Init
+progress.style.width = `${(1 / total) * 100}%`;
+counter.textContent  = `1 / ${total}`;
+</script>
+</body>
+</html>

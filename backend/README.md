@@ -109,7 +109,7 @@ The RAG chat endpoint. Sends a question and gets an AI-generated answer backed b
 ```json
 {
   "question": "Which card has the best cashback for online shopping?",
-  "top_k": 7,
+  "top_k": 10,
   "llm_provider": "gemini-3.1-flash-lite"
 }
 ```
@@ -138,7 +138,7 @@ The RAG chat endpoint. Sends a question and gets an AI-generated answer backed b
     { "card_title": "AmBank BonusLink Visa Signature", "bank": "AmBank", "min_annual_income": "48000" }
   ],
   "provider": "gemini-3.1-flash-lite",
-  "top_k": 7,
+  "top_k": 10,
   "match_scores": 66
 }
 ```

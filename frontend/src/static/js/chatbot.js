@@ -164,7 +164,7 @@ askBtn.addEventListener("click", async () => {
 	const income   = incomeEl.value;
 	const question = questionEl.value.trim();
 
-	if (!income) { showError("Please select your monthly income range."); return; }
+	if (!income) { showError("Please select your annual income range."); return; }
 	if (!question) { showError("Please enter your question."); return; }
 
 	// Build composite prompt with history context
@@ -178,7 +178,7 @@ askBtn.addEventListener("click", async () => {
 		? `\n\nPrevious recommendations:\n${prevCards.join("\n")}`
 		: "";
 
-	const compositeQuestion = `My monthly income is ${income}.${historyBlock}\n\nCurrent question: ${question}`;
+	const compositeQuestion = `My annual income is ${income}.${historyBlock}\n\nCurrent question: ${question}`;
 
 	// Show loading
 	askBtn.disabled = true;
@@ -195,7 +195,7 @@ askBtn.addEventListener("click", async () => {
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
 				question:     compositeQuestion,
-				top_k:        7,
+				top_k:        10,
 				llm_provider: "gemini-3.1-flash-lite",
 			}),
 		});
@@ -262,5 +262,5 @@ questionEl.addEventListener("keydown", (e) => {
 
 /* ============================================================
    Also update api.py default — reminder comment
-   (top_k hardcoded to 7 in fetch above, llm_provider to gemini-3.1-flash-lite)
+   (top_k hardcoded to 10 in fetch above, llm_provider to gemini-3.1-flash-lite)
    ============================================================ */

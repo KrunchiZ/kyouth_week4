@@ -23,6 +23,11 @@ _embedder: SentenceTransformer | None = None
 _chunks: list[str] | None = None
 _chunk_vectors = None
 
+_bank_names:str = """\
+AEON.Affin.Alliance Bank.AmBank.Bank Islam.\
+Bank Rakyat.BSN.CIMB.HSBC.Hong Leong.Maybank.OCBC.Public Bank.\
+RHB.Standard Chartered.UOB\n
+"""
 
 def load_cards(db_path: Path) -> list[dict]:
 	"""Fetch all cards from SQLite."""
@@ -72,7 +77,7 @@ def retrieve_top_context(user_query: str, top_k: int) -> list[dict]:
 		logging.error("RAG context not initialized — run lifespan first")
 		return []
 
-	query_vector = _embedder.encode([user_query])
+	query_vector = _embedder.encode([_bank_names + user_query])
 	similarity_scores = cosine_similarity(query_vector, _chunk_vectors)[0]
 	top_indices = similarity_scores.argsort()[-top_k:][::-1]
 	return [{

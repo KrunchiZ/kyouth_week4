@@ -143,8 +143,15 @@ async def ask(request: Request, user_request: AskRequest):
 			if i < 2:
 				logging.warning("LLM response did not contain a valid card title. Retrying...")
 				continue
-			raise HTTPException(status_code=503,
-				detail="LLM response did not contain a valid card title after 3 attempts.")
+			logging.error("LLM response did not contain a valid card title after 3 attempts.")
+			return AskResponse(
+				answer="Error fetching card details. Please refresh the page and try again.",
+				final_card=None,
+				cards_used=[],
+				provider=user_request.llm_provider,
+				top_k=user_request.top_k,
+				match_scores=0
+			)
 	try:
 		match_scores = (matched_card_titles[final_card["card_title"]]
 			if final_card and final_card["card_title"] in matched_card_titles
@@ -166,4 +173,12 @@ async def ask(request: Request, user_request: AskRequest):
 	except ValidationError as code:
 		error_messages = [f"{' -> '.join(map(str, err['loc']))}: {err['msg']} ({err['type']})"
 			for err in code.errors()]
-		raise HTTPException(status_code=422, detail=f"{error_messages}")
+		logging.error(f"AskResponse Validation Error: {error_messages}")
+		return AskResponse(
+			answer="Error fetching card details. Please refresh the page and try again.",
+			final_card=None,
+			cards_used=[],
+			provider=user_request.llm_provider,
+			top_k=user_request.top_k,
+			match_scores=0
+		)

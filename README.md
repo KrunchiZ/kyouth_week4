@@ -14,7 +14,6 @@ Malaysian consumers face a fragmented landscape when comparing credit cards. Car
 
 - **Malaysian consumers** seeking to choose or compare credit cards
 - **Financially conscious shoppers** looking for optimal cashback, rewards, and fee structures
-- **Students and researchers** studying financial product data pipelines and RAG architectures
 
 ### System Goal
 
@@ -31,25 +30,23 @@ Provide a unified, searchable, and AI-assisted platform where users can:
 ### High-Level Architecture
 
 ```
-┌─────────────┐     ┌──────────────┐     ┌─────────────┐
-│  Browser    │───▶│  Frontend    │───▶│  Backend    │
-│ (Port 8000) │     │  (Jinja2)    │     │  (FastAPI)  │
-└─────────────┘     └──────────────┘     └──────┬──────┘
+ ┌─────────────┐     ┌──────────────┐     ┌─────────────┐
+ │   Browser   │───▶│   Frontend   │───▶│   Backend   │
+ │ (Port 8000) │     │   (Jinja2)   │     │  (FastAPI)  │
+ └─────────────┘     └──────────────┘     └──────┬──────┘
                                                  │
                                     ┌────────────▼────────────┐
-                                    │     RAG Engine          │
+                                    │       RAG Engine        │
                                     │ (Gemini / Ollama LLMs)  │
                                     └────────────┬────────────┘
-                                                 │
                                     ┌────────────▼────────────┐
-                                    │  SQLite (Gold Layer)    │
-                                    │  credit_cards.db        │
+                                    │   SQLite (Gold Layer)   │
+                                    │    - credit_cards.db    │
                                     └────────────┬────────────┘
-                                                 │
                                     ┌────────────▼────────────┐
-                                    │  ETL Pipeline           │
-                                    │  (.mhtml → .html →      │
-                                    │   .json → .db)          │
+                                    │      ETL Pipeline       │
+                                    │   (.mhtml → .html →     │
+                                    │       .json → .db)      │
                                     └─────────────────────────┘
 ```
 
@@ -164,9 +161,9 @@ uv run uvicorn --app-dir src --host 0.0.0.0 --port 8000 app:app
 ### AI Chatbot (RAG-Powered)
 
 - **Natural language questions**: "Which card has the best cashback for online shopping?"
-- **Income-aware recommendations**: Select your income bracket for personalized suggestions
+- **Context-aware recommendations**: Select your income bracket for personalized suggestions with previous inquiries as context.
 - **Grounded responses**: Answers cite specific cards with match scores
-- **Multiple LLM backends**: Choose from Gemini (3.1 Flash Lite, 2.5 Flash Lite, 3.5 Flash) or local Ollama models (Llama 3.2, Gemma 3 1B)
+- **Multiple LLM backends**: Defaults to Gemini 3.1 Flash Lite. Local Ollama models (llama3.2, Gemma3:1b) are available for local dev purposes.
 - **Session management**: Chat history with session download as JSON
 
 ### Data Pipeline

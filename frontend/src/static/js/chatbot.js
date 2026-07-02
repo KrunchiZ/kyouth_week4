@@ -44,12 +44,6 @@ function clearError() {
     inputError.classList.add("d-none");
 }
 
-function formatAnswer(text) {
-    // Strip leading "CardTitle\nBank\n---\n" header the LLM prepends
-    const parts = text.split("---\n");
-    return parts.length > 1 ? parts.slice(1).join("---\n").trim() : text.trim();
-}
-
 /* ============================================================
    Render helpers
    ============================================================ */
@@ -62,7 +56,7 @@ function renderCondensed(entry) {
             <span class="entry-income-badge">${entry.income_bracket}</span>
             <span class="entry-question">${escHtml(entry.question)}</span>
         </div>
-        <p class="entry-answer-condensed">${escHtml(formatAnswer(entry.answer))}</p>
+        <p class="entry-answer-condensed">${escHtml(entry.answer)}</p>
     `;
     return div;
 }
@@ -127,7 +121,7 @@ function renderLatest(entry) {
                 <span class="entry-question">${escHtml(entry.question)}</span>
             </div>
         </div>
-        <div class="entry-latest-answer">${escHtml(formatAnswer(entry.answer))}</div>
+        <div class="entry-latest-answer">${escHtml(entry.answer)}</div>
         ${renderCardSpotlight(entry.final_card, entry.match_scores)}
     `;
     return div;
